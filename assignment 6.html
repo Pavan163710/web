@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My New Canvas</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        #canvas{
+            border: 1px solid red;             
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+
+        window.addEventListener("devicemotion", (event) => {
+            if(event.acceleration.x>10){
+                speakx();
+            }
+            if(event.acceleration.y>10){
+                speaky();
+            }
+            if(event.acceleration.z>10){
+                speakz();
+            }
+        });
+            
+            
+                
+
+        window.addEventListener("deviceorientation", handleOrientation, true);        
+
+        function handleOrientation(event) {
+            const absolute = event.absolute;
+            const alpha = event.alpha;
+            const beta = event.beta;
+            const gamma = event.gamma;
+
+            if(beta<-5&&gamma>-5&&gamma<5){
+                const canvas = document.querySelector('canvas');
+                const ctxt = canvas.getContext('2d');
+                ctxt.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                topdraw(beta);
+                // speak();
+            }
+            else if(beta>5){
+                const canvas = document.querySelector('canvas');
+                const ctxt = canvas.getContext('2d');
+                ctxt.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                topdraw(beta);
+                // speak();
+            }
+            else if(gamma<-5&&beta>-5&&beta<5){
+                const canvas = document.querySelector('canvas');
+                const ctxt = canvas.getContext('2d');
+                ctxt.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                sidedraw(gamma);
+                // speak();
+            }
+            else if(gamma>5&&beta<-5&&beta<5){
+                const canvas = document.querySelector('canvas');
+                const ctxt = canvas.getContext('2d');
+                ctxt.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                sidedraw(gamma);
+                // speak();
+            }
+            else {
+                const canvas = document.querySelector('canvas');
+                const ctxt = canvas.getContext('2d');
+                ctxt.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                draw();
+            }
+            
+        }
+
+        //side tilt activation
+        function sidedraw(gamma){
+            const canvas = document.querySelector('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width=400;
+            canvas.height=800;
+
+            for(let m=0;m<400;m=m+160){
+                ctx.beginPath();
+                ctx.moveTo(m, 800);
+                ctx.lineTo((m+160),400);
+                ctx.lineTo(m+160,800);
+                ctx.lineTo(m, 800);
+                ctx.stroke();
+                ctx.fillStyle = 'rgba(250,220,137)';
+                ctx.strokeStyle = "white";
+                ctx.fill();
+            }
+
+            for(let i=80;i<400;i=i+160){
+                ctx.beginPath();
+                ctx.moveTo(i,0);
+                ctx.lineTo(i, 800);
+                ctx.lineTo(i-gamma, 800);
+                ctx.lineTo(i-gamma, 0);
+                ctx.lineTo(i,0);
+                ctx.stroke();
+                ctx.fillStyle = color;
+                ctx.strokeStyle = "black";
+                ctx.fill();                
+            }  
+            
+            for(let i=160;i<400;i=i+160){
+                ctx.beginPath();
+                ctx.moveTo(i,0);
+                ctx.lineTo(i, 800);
+                ctx.lineTo(i-gamma, 800);
+                ctx.lineTo(i-gamma, 0);
+                ctx.lineTo(i,0);
+                ctx.stroke();
+                ctx.fillStyle = color2;
+                ctx.strokeStyle = "black";
+                ctx.fill();                
+            }
+        }
+
+        function speak() {
+            
+            const synth = window.speechSynthesis;
+            if (synth.speaking) {
+                console.error("speechSynthesis.speaking");
+                return;
+            }
+            const utterThis = new SpeechSynthesisUtterance("Please do not shake me sideways.");
+            synth.speak(utterThis);
+        }
+
+        function speakx() {
+            
+            const synth = window.speechSynthesis;
+            if(synth.speaking) {
+                console.error("speechSynthesis.speaking");
+                return;
+            }
+            const utterThis = new SpeechSynthesisUtterance("Do not shake me sideways.");
+            synth.speak(utterThis);
+            return;
+        }
+        
+        function speaky() {
+            const synth = window.speechSynthesis;
+            if(synth.speaking) {
+                console.error("speechSynthesis.speaking");
+                return;
+            }
+            const utterThis = new SpeechSynthesisUtterance("Do not shake me up or down");
+            synth.speak(utterThis);
+            return;
+        }
+
+        function speakz() {
+            const synth = window.speechSynthesis;
+            if(synth.speaking) {
+                console.error("speechSynthesis.speaking");
+                return;
+            }
+            const utterThis = new SpeechSynthesisUtterance("Do not lift or drop me!");
+            synth.speak(utterThis);
+            return;
+        }
+
+        //vertical tilt activation
+        function topdraw(beta){
+            
+            const canvas = document.querySelector('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width=400;
+            canvas.height=800;
+            
+
+            for(let m=0;m<400;m=m+160){
+                ctx.beginPath();
+                ctx.moveTo(m, 800);
+                ctx.lineTo((m+160),400);
+                ctx.lineTo(m+160,800);
+                ctx.lineTo(m, 800);
+                ctx.stroke();
+                ctx.fillStyle = 'rgba(250,220,137)';
+                ctx.strokeStyle = "white";
+                ctx.fill();
+            }
+
+            for(let i=80;i<400;i=i+80){
+                ctx.beginPath();
+                ctx.moveTo(i,0);
+                ctx.quadraticCurveTo(i-(2*beta), 250, i, 400);
+                ctx.quadraticCurveTo(i+(2*beta), 600, i, 800);
+                ctx.stroke();
+                ctx.fillStyle = color;
+                ctx.strokeStyle = "black";
+                ctx.fill();                
+            }            
+        }        
+
+        //color generator
+        function random_rgba() {
+            var o = Math.round, r = Math.random, s = 255;
+            return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
+        }
+        var color = random_rgba();
+        var color2 = random_rgba();
+
+        //main function
+        function draw(){
+            const canvas = document.querySelector('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width=window.innerWidth;
+            canvas.height=window.innerHeight;
+
+            let w=(window.innerWidth)/12;
+            let i=w;
+            let h=(window.innerHeight);
+
+            for(let i=(window.innerWidth)/12;i<window.innerWidth;i=i+(window.innerWidth)/12){
+                ctx.beginPath();
+                ctx.moveTo(i,0);
+                ctx.quadraticCurveTo(i-(window.innerWidth)/24, window.innerHeight/4, i, window.innerHeight/2);
+                ctx.quadraticCurveTo(i+(window.innerWidth)/24, (window.innerHeight/4)*3, i, window.innerHeight);
+                ctx.lineTo((i-(window.innerWidth)/12), window.innerHeight);
+                ctx.quadraticCurveTo(((i-(window.innerWidth)/12)+(window.innerWidth)/24),(window.innerHeight/4)*3, (i-(window.innerWidth)/12), window.innerHeight/2);
+                ctx.quadraticCurveTo(((i-(window.innerWidth)/12)-(window.innerWidth)/24),(window.innerHeight/4), (i-(window.innerWidth)/12),0);
+                ctx.lineTo(i,0);
+                ctx.stroke();
+                ctx.fillStyle = random_rgba();
+                ctx.strokeStyle = "white";
+                ctx.fill();                
+            }
+
+            for(let m=0;m<window.innerWidth;m=m+((window.innerWidth)/6)){
+                ctx.beginPath();
+                ctx.moveTo(m, window.innerHeight);
+                ctx.lineTo((m+(window.innerWidth)/6),window.innerHeight/2);
+                ctx.quadraticCurveTo((m+(window.innerWidth)/6)+(window.innerWidth)/24, (window.innerHeight/4)*3, (m+(window.innerWidth)/6), window.innerHeight);
+                ctx.lineTo(m, window.innerHeight);
+                ctx.stroke();
+                ctx.fillStyle = random_rgba();
+                ctx.strokeStyle = "white";
+                ctx.fill();
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(0,(window.innerHeight)/2);
+            ctx.lineTo((window.innerWidth)/6,0);
+            ctx.lineTo(0,0);
+            ctx.stroke();
+            ctx.fillStyle = random_rgba();
+            ctx.strokeStyle = "white";
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(window.innerWidth,0);
+            ctx.lineTo((window.innerWidth)-((window.innerWidth)/6),window.innerHeight/2);
+            ctx.lineTo((window.innerWidth)-((window.innerWidth)/6),0)
+            ctx.stroke();
+            ctx.fillStyle = random_rgba();
+            ctx.strokeStyle = "white";
+            ctx.fill();
+        }
+        window.onload=draw;
+    </script>
+</body>
+</html>
